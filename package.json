@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/MalakaDeSilva/DS-TrainBookingAppBackEnd/issues"
   },
-  "homepage": "https://github.com/MalakaDeSilva/DS-TrainBookingAppBackEnd#readme"
+  "homepage": "https://github.com/MalakaDeSilva/DS-TrainBookingAppBackEnd#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
 }
