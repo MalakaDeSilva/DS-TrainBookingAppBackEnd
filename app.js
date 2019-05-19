@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const userRoutes = require('./api/routes/userController');
+const cardPaymentRoute = require('./api/routes/cardPaymentController');
+const mobilePaymentRoute = require('./api/routes/mobilePaymentController');
 
 const url = 'mongodb://127.0.0.1:27017/TicketBookingSystemDB';
 mongoose.connect(url, {
@@ -30,6 +32,8 @@ app.use((req, res, next)=>{
 
 // routes
 app.use('/users', userRoutes);
+app.use('/card-payment', cardPaymentRoute);
+app.use('/mobile-payment', mobilePaymentRoute);
 
 app.use((req, res, next) => {
     const error = new Error('Not found.');

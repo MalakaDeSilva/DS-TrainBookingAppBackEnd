@@ -1,9 +1,35 @@
+const express = require('express');
+const moment = require('moment');
 const twilio = require('twilio');
+const nodeMailer = require('nodemailer');
+
+const router = express.Router();
+
+const MobilePayment = require('../model/mobilePaymentModel');
 
 const AccountSid = 'AC8c1239baa4854f62534587f0d51feef2';
 const AuthToken = '83af64fa3e9f7cdfb36a67fbef49080b';
 const client = new twilio(AccountSid, AuthToken);
 const twilioNumber = '+19386665693';
+
+router.post('/', (req, res, next) => {
+    var payment = new MobilePayment({
+        amount: req.body.amount,
+        trainRoute: req.body.route,
+        noOftickets: req.body.tickets,
+        dateTime: moment().format('yyyy-mm-dd:hh:mm:ss')
+    });
+
+    payment.save()
+        .then(result => {
+            res.status(200).json(result);
+        })
+        .catch(err => {
+            res.status(500).json({
+                error: err
+            });
+        });
+});
 
 function sendSMS(number, details) {
     let message = 'Thank you for using TrainBooking. Your train details,\n' +
@@ -48,4 +74,4 @@ function sendEmail(email, details) {
     });
 }
 
-module.exports = notifier;
+module.exports = router;
