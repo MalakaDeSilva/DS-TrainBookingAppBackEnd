@@ -1,53 +1,64 @@
 const express = require('express');
+const mongoose = require('mongoose');
+
 const router = express.Router();
 
-// Handle incoming GET requests to /users.
-router.get('/', (req, res, next) => {
-    res.status(200).json({
-        message: 'Reply for GET request.'
-    });
-});
+const User = require('../model/userModel');
 
-router.get('/:userId', (req, res, next) => {
+// Handle incoming GET requests to /users.
+/* router.get('/:userId', (req, res, next) => {
     const id = req.params.userId;
-    if(id === 'special'){
-        res.status(200).json({
-            message: 'Id has been discovered.',
-            id: id
+    User.findById(id)
+        .exec()
+        .then(doc => {
+            if (doc) {
+                console.log(doc);
+                res.status(200).json(doc);
+            } else {
+                res.status(404).json({ message: 'No valid entry found for the provided ID.' });
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({ error: err });
         });
-    } else {
-        res.status(200).json({
-            message: 'You passed an ID.'
-        });
-    }
-});
+}); */
 
 router.post('/', (req, res, next) => {
-    const user = {
-        name: req.body.uName,
+    var user = new User({
+        _id: new mongoose.Types.ObjectId(),
+        name: req.body.name,
         email: req.body.email,
         phone: req.body.phone,
-        type: req.body.type
-    };
-    console.log(req.body.uName);
+        password: req.body.password,
+        NIC: req.body.nic,
+        userType: req.body.type
+    });
+
+    user.save().then(result => {
+        console.log(result);
+    }).catch(err => {
+        console.log(err);
+    });
+
     res.status(200).json({
         message: 'Reply for POST request.',
         createdUser: user
     });
 });
 
-router.delete('/:userId', (req, res, next) => {
-    const id = req.params.userId;
+router.get('/:email', (req, res, next) => {
+    var query = {
+        email: req.params.email,
+        password: req.params.password
+    };
 
-    res.status(200).json({
-        message: 'Reply for DELETE request.',
-        id: id
-    });
-});
-
-router.patch('/', (req, res, next) => {
-    res.status(200).json({
-        message: 'Reply for PATCH request.'
+    User.find(query)
+    .then(users=>{
+        res.status(200).json(users);
+    })
+    .catch(err=>{
+        res.status(500).json({error: err});
     });
 });
 
