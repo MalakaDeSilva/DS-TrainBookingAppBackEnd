@@ -6,7 +6,7 @@ const router = express.Router();
 const User = require('../model/userModel');
 
 // Handle incoming GET requests to /users.
-/* router.get('/:userId', (req, res, next) => {
+router.get('/:userId', (req, res, next) => {
     const id = req.params.userId;
     User.findById(id)
         .exec()
@@ -22,7 +22,7 @@ const User = require('../model/userModel');
             console.log(err);
             res.status(500).json({ error: err });
         });
-}); */
+}); 
 
 router.post('/', (req, res, next) => {
     var user = new User({
@@ -47,7 +47,7 @@ router.post('/', (req, res, next) => {
     });
 });
 
-router.get('/:email', (req, res, next) => {
+router.get('/:email/:password', (req, res, next) => {
     var query = {
         email: req.params.email,
         password: req.params.password
