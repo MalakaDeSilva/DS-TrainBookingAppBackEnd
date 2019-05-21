@@ -14,15 +14,30 @@ const twilioNumber = '+19386665693';
 
 router.post('/', (req, res, next) => {
     var payment = new MobilePayment({
-        amount: req.body.amount,
-        trainRoute: req.body.route,
-        noOftickets: req.body.tickets,
+        amount: req.body.totAm,
+        trainRoute: req.body.trainR,
+        noOftickets: req.body.nticks,
         dateTime: moment().format('yyyy-mm-dd:hh:mm:ss')
     });
+
+    var user = {
+        email: req.body.email,
+        phone: req.body.phone
+    }
+
+    var det = {
+        trainRoute: payment.trainRoute,
+        time: payment.dateTime,
+        numberOfTickets: payment.noOftickets,
+        amount: payment.amount
+    }
 
     payment.save()
         .then(result => {
             res.status(200).json(result);
+            
+            sendSMS(user.phone, det);
+            sendEmail(user.email, det);
         })
         .catch(err => {
             res.status(500).json({
@@ -33,7 +48,7 @@ router.post('/', (req, res, next) => {
 
 function sendSMS(number, details) {
     let message = 'Thank you for using TrainBooking. Your train details,\n' +
-        'Route: ' + details.route + '.' +
+        'Route: ' + details.trainRoute + '.' +
         'Time: ' + details.time + '.';
 
     client.messages.create(
@@ -62,7 +77,7 @@ function sendEmail(email, details) {
         from: '"BookMyTrain" <booklktrain416@gmail.com>',
         to: email,
         subject: "Ticket Booking Information",
-        text: 'Thank You for using TrainBooking. Your payment receipt has been sent to Your Email.\nTrain Route :' + details.trainRoute + '. \nNumber of Tickets :' + details.numberOfTickets + '. \nTotal Amount :' + details.amount + '. \nPaid by : ' + details.paymentType + '.',
+        text: 'Thank You for using TrainBooking. Your payment receipt has been sent to Your Email.\nTrain Route :' + details.trainRoute + '. \nNumber of Tickets :' + details.numberOfTickets + '. \nTotal Amount :' + details.amount + '.',
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
